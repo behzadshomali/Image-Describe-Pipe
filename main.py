@@ -5,9 +5,15 @@ import cv2
 from PIL import Image
 import numpy as np
 import pandas as pd
-
+from pathlib import Path
+import os
 
 THRESHOLD = 0.4
+
+
+HOME = str(Path.home())
+os.system(f"sudo cp ./retinaface.h5 {HOME}/.deepface/weights/")
+os.system(f"sudo cp ./facenet_weights.h5 {HOME}/.deepface/weights/")
 
 
 faces = RetinaFace.detect_faces('./Test/people.jpg', 0.95)
