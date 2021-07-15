@@ -1,8 +1,21 @@
+from typing import final
 import psycopg2
+from deepface import DeepFace
+from retinaface import RetinaFace
+import matplotlib.pyplot as plt
+import cv2
+from PIL import Image
+import numpy as np
+import pandas as pd
+from pathlib import Path
+import os
+import urllib.request
+import pickle
 
 def connect(password, host='localhost', database='Image describe pipe DB', user='postgres'):
     """ Connect to the PostgreSQL database server """
     conn = None
+    model = DeepFace.build_model('Facenet')
     try:
         print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(
@@ -12,7 +25,7 @@ def connect(password, host='localhost', database='Image describe pipe DB', user=
             password = password)
         print('Connection has established successfully.')
 
-        return conn
+        return conn, model
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
@@ -22,18 +35,38 @@ def disconnect(conn):
     print('Database connection closed.')
 
 
-def add_defining_image(conn, user_email, image_url, who_is_in):
+def add_defining_image(conn, model, user_email, image_url, who_is_in):
+    os.system('mkdir ./tmp/ ./tmp/DB')
+    os.system(f'touch ./tmp/tmp.jpg ./tmp/DB/{who_is_in.split()[0]}.jpg')
+
+    urllib.request.urlretrieve(
+        "https://upload.wikimedia.org/wikipedia/commons/thumb/6/66/Temporary_plate.svg/1202px-Temporary_plate.svg.png"
+        ,'./tmp/tmp.jpg'
+        )
+
+    urllib.request.urlretrieve(
+        image_url
+        ,f'./tmp/DB/{who_is_in.split()[0]}.jpg'
+        )
+
+    
+    DeepFace.find('./tmp/tmp.jpg', './tmp/DB', 'Facenet', model=model, enforce_detection=False)
+
+    with open('./tmp/DB/representations_facenet.pkl', 'rb') as f:
+        data = pickle.load(f)
+
     try:
         cur = conn.cursor()
         cur.execute(
             f'''
-            INSERT INTO public.images(user_email, image_url, who_is_in)
+            INSERT INTO public.images(user_email, image_url, representation, who_is_in)
             VALUES(
                 '{user_email}',
                 '{image_url}',
+                '{data[0][1]}',
                 '{who_is_in}'
             )
-            ON CONFLICT (image_url, user_email) DO UPDATE SET who_is_in = EXCLUDED.who_is_in;
+            ON CONFLICT (image_url, user_email) DO UPDATE SET who_is_in = EXCLUDED.who_is_in, representation = EXCLUDED.representation;
 
             INSERT INTO public.logs(user_email, action, date)
             VALUES(
@@ -48,6 +81,8 @@ def add_defining_image(conn, user_email, image_url, who_is_in):
         print('Image has been added to database successfully.')
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
+    finally:
+        os.system('rm -rf ./tmp')
 
 
 def remove_defining_image(conn, user_email, image_url):
