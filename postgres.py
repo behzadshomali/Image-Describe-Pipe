@@ -16,6 +16,12 @@ def connect(password, host='localhost', database='Image describe pipe DB', user=
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
+
+def disconnect(conn):
+    conn.close()
+    print('Database connection closed.')
+
+
 def add_defining_image(conn, user_email, image_url, who_is_in):
     try:
         cur = conn.cursor()

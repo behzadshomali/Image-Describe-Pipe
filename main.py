@@ -17,5 +17,4 @@ if __name__ == '__main__':
     # )
     add_user(conn, 'Behnam Shomali', 15, 'behnam.shomali@gmail.com', '123')
     # remove_user(conn, 'behnam.shomali@gmail.com')
-    conn.close()
-    print('Database connection closed.')
+    disconnect(conn)
