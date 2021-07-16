@@ -2,11 +2,10 @@ from postgres import *
 
 if __name__ == '__main__':
     password = input('Enter your password: ')
-    conn, model = connect(password=password)
+    conn = connect(password=password)
 
     add_defining_image(
         conn,
-        model,
         'behnam.shomali@gmail.com',
         'https://m.media-amazon.com/images/M/MV5BMWM3MDMzNjMtODM5Ny00YmY0LWJhNzQtNTE1ZDNlNjllNDQ0XkEyXkFqcGdeQXVyODkzNTgxMDg@._V1_.jpg',
         'Anna'

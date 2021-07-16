@@ -1,13 +1,5 @@
-from typing import final
 import psycopg2
 from deepface import DeepFace
-from retinaface import RetinaFace
-import matplotlib.pyplot as plt
-import cv2
-from PIL import Image
-import numpy as np
-import pandas as pd
-from pathlib import Path
 import os
 import urllib.request
 import pickle
@@ -15,7 +7,6 @@ import pickle
 def connect(password, host='localhost', database='Image describe pipe DB', user='postgres'):
     """ Connect to the PostgreSQL database server """
     conn = None
-    model = DeepFace.build_model('Facenet')
     try:
         print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(
@@ -25,7 +16,7 @@ def connect(password, host='localhost', database='Image describe pipe DB', user=
             password = password)
         print('Connection has established successfully.')
 
-        return conn, model
+        return conn
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
 
@@ -35,7 +26,7 @@ def disconnect(conn):
     print('Database connection closed.')
 
 
-def add_defining_image(conn, model, user_email, image_url, who_is_in):
+def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.build_model('Facenet')):
     os.system('mkdir ./tmp/ ./tmp/DB')
     os.system(f'touch ./tmp/tmp.jpg ./tmp/DB/{who_is_in.split()[0]}.jpg')
 
@@ -49,9 +40,7 @@ def add_defining_image(conn, model, user_email, image_url, who_is_in):
         ,f'./tmp/DB/{who_is_in.split()[0]}.jpg'
         )
 
-    
     DeepFace.find('./tmp/tmp.jpg', './tmp/DB', 'Facenet', model=model, enforce_detection=False)
-
     with open('./tmp/DB/representations_facenet.pkl', 'rb') as f:
         data = pickle.load(f)
 
@@ -71,7 +60,7 @@ def add_defining_image(conn, model, user_email, image_url, who_is_in):
             INSERT INTO public.logs(user_email, action, date)
             VALUES(
                 '{user_email}',
-                'Added/updated a defining image',
+                'Added/updated a defining image with url ({image_url})',
                 NOW()
             )
             '''
@@ -102,7 +91,7 @@ def remove_defining_image(conn, user_email, image_url):
                 INSERT INTO public.logs(user_email, action, date)
                 VALUES(
                     '{user_email}',
-                    'Removed a defining image',
+                    'Removed a defining image with url ({image_url})',
                     NOW()
                 )
                 '''
@@ -114,7 +103,7 @@ def remove_defining_image(conn, user_email, image_url):
                 INSERT INTO public.logs(user_email, action, date)
                 VALUES(
                     '{user_email}',
-                    'Tried to remove a unexisting defining image',
+                    'Tried to remove a unexisting defining-image with url ({image_url})',
                     NOW()
                 )
                 '''
@@ -142,11 +131,15 @@ def add_user(conn, full_name, age, email, password):
             ON CONFLICT (email) DO UPDATE SET full_name = EXCLUDED.full_name, age = EXCLUDED.age, password = EXCLUDED.password;
 
             INSERT INTO public.logs(user_email, action, date)
-            VALUES(
+            SELECT
                 '{email}',
-                'User is updated/added to database',
+                'User "' ||
+                (
+                    SELECT full_name
+                    FROM public.users
+                    WHERE email = '{email}'
+                ) || '" updated/added',
                 NOW()
-            )
             '''
         )
         conn.commit()
