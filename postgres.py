@@ -2,7 +2,7 @@ from typing import final
 import psycopg2
 from deepface import DeepFace
 import os
-import urllib.request
+import requests
 import pickle
 import matplotlib.pyplot as plt
 
@@ -30,17 +30,19 @@ def disconnect(conn):
 
 def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.build_model('Facenet')):
     os.system('mkdir ./tmp/')
-    os.system(f'touch ./tmp/{who_is_in.split()[0]}.jpg')
+    # os.system(f'touch ./tmp/{who_is_in.split()[0]}.jpg')
 
-    urllib.request.urlretrieve(
-        image_url
-        ,f'./tmp/{who_is_in.split()[0]}.jpg'
-        )
-
-    img = plt.imread(f'./tmp/{who_is_in.split()[0]}.jpg')
-    data = DeepFace.represent(img, 'Facenet', model)
-
+    # urllib.urlretrieve(
+    #     image_url
+    #     ,f'./tmp/{who_is_in.split()[0]}.jpg'
+    #     )
     try:
+        with open(f'./tmp/{who_is_in.split()[0]}.jpg', 'wb') as f:
+            f.write(requests.get(image_url).content)
+
+        img = plt.imread(f'./tmp/{who_is_in.split()[0]}.jpg')
+        data = DeepFace.represent(img, 'Facenet', model)
+
         cur = conn.cursor()
         cur.execute(
             f'''
