@@ -1,10 +1,14 @@
 from typing import final
 import psycopg2
+from PIL import Image
 from deepface import DeepFace
+from retinaface import RetinaFace
 import os
 import requests
 import pickle
 import matplotlib.pyplot as plt
+import numpy as np
+import cv2
 
 def connect(password, host='localhost', database='Image describe pipe DB', user='postgres'):
     """ Connect to the PostgreSQL database server """
@@ -187,3 +191,66 @@ def remove_user(conn, email):
         cur.close()
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)
+
+
+def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Facenet')):
+    THRESHOLD = 0.4
+    os.system('mkdir ./tmp/ ./tmp/DB ./output/')
+    try:
+        with open('./tmp/img.jpg', 'wb') as f:
+            f.write(requests.get(image_url).content)
+
+        img = plt.imread('./tmp/img.jpg')
+        faces = RetinaFace.detect_faces(img, 0.95)
+
+        cur = conn.cursor()
+        cur.execute(
+            f'''
+            SELECT who_is_in, image_url 
+            FROM public.images
+            WHERE user_email = '{user_email}'
+            '''
+        )
+        fetched_data = cur.fetchall()
+        for indx, (who_is_in, url) in enumerate(fetched_data):
+            with open(f'./tmp/DB/{who_is_in}_{indx}.jpg', 'wb') as f:
+                f.write(requests.get(image_url).content)
+        # cur.execute(
+        #     f'''
+        #     SELECT who_is_in, representation 
+        #     FROM public.images
+        #     WHERE user_email = '{user_email}'
+        #     '''
+        # )
+        # representations_facenet = {}
+        # fetched_data = cur.fetchall()
+        # for indx, (who_is_in, representation) in enumerate(fetched_data):
+        #     rep = representation.replace(' ', '')
+        #     rep = rep.replace('[', '')
+        #     rep = rep.replace(']', '')
+        #     rep = list(map(float, rep.split(',')))
+        #     representations_facenet[f'{who_is_in}_{indx}'] = rep
+        
+        # with open('./tmp/representations_facenet.pkl', 'wb') as f:
+        #     pickle.dump(representations_facenet, f)
+        
+        for face_info in faces.values():
+            facial_area = face_info['facial_area']
+            face = Image.fromarray(img).crop((facial_area[0], facial_area[1], facial_area[2], facial_area[3]))
+            df = DeepFace.find(np.asarray(face), './tmp/DB', 'Facenet', model=model, enforce_detection=False)
+            if df.shape[0] > 0:
+                df = df.sort_values(by=['Facenet_cosine'])
+                if df['Facenet_cosine'][0] <= THRESHOLD:
+                    img = cv2.rectangle(img, (facial_area[2], facial_area[3])
+                        , (facial_area[0], facial_area[1]), (200, 200, 200), 1)
+
+                    cv2.putText(img, df['identity'][0].split('/')[-1].split('.')[0].split('_')[0]
+                        , (facial_area[0],facial_area[3]), cv2.FONT_HERSHEY_SIMPLEX
+                        , 1, color=(200,200,200), thickness=2)
+        
+        plt.imsave('./output/output.jpg', img)
+
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+    finally:
+        os.system(f'rm -rf ./tmp/')
