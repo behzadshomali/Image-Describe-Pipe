@@ -5,6 +5,7 @@ from deepface import DeepFace
 from retinaface import RetinaFace
 import os
 import requests
+from scipy.spatial.distance import cosine
 import pickle
 import matplotlib.pyplot as plt
 import numpy as np
@@ -32,7 +33,7 @@ def disconnect(conn):
     print('Database connection closed.')
 
 
-def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.build_model('Facenet')):
+def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.build_model('Facenet512')):
     os.system('mkdir ./tmp/')
     # os.system(f'touch ./tmp/{who_is_in.split()[0]}.jpg')
 
@@ -45,7 +46,7 @@ def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.bu
             f.write(requests.get(image_url).content)
 
         img = plt.imread(f'./tmp/{who_is_in.split()[0]}.jpg')
-        data = DeepFace.represent(img, 'Facenet', model)
+        data = DeepFace.represent(img, 'Facenet512', model)
 
         cur = conn.cursor()
         cur.execute(
@@ -193,9 +194,10 @@ def remove_user(conn, email):
         print(error)
 
 
-def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Facenet')):
-    THRESHOLD = 0.4
+def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Facenet512')):
+    THRESHOLD = 0.6
     os.system('mkdir ./tmp/ ./tmp/DB ./output/')
+
     try:
         with open('./tmp/img.jpg', 'wb') as f:
             f.write(requests.get(image_url).content)
@@ -206,47 +208,42 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
         cur = conn.cursor()
         cur.execute(
             f'''
-            SELECT who_is_in, image_url 
+            SELECT who_is_in, representation 
             FROM public.images
             WHERE user_email = '{user_email}'
             '''
         )
+        representations_facenet = {}
         fetched_data = cur.fetchall()
-        for indx, (who_is_in, url) in enumerate(fetched_data):
-            with open(f'./tmp/DB/{who_is_in}_{indx}.jpg', 'wb') as f:
-                f.write(requests.get(image_url).content)
-        # cur.execute(
-        #     f'''
-        #     SELECT who_is_in, representation 
-        #     FROM public.images
-        #     WHERE user_email = '{user_email}'
-        #     '''
-        # )
-        # representations_facenet = {}
-        # fetched_data = cur.fetchall()
-        # for indx, (who_is_in, representation) in enumerate(fetched_data):
-        #     rep = representation.replace(' ', '')
-        #     rep = rep.replace('[', '')
-        #     rep = rep.replace(']', '')
-        #     rep = list(map(float, rep.split(',')))
-        #     representations_facenet[f'{who_is_in}_{indx}'] = rep
+        for indx, (who_is_in, representation) in enumerate(fetched_data):
+            rep = representation.replace(' ', '')
+            rep = rep.replace('[', '')
+            rep = rep.replace(']', '')
+            rep = list(map(float, rep.split(',')))
+            representations_facenet[f'{who_is_in}_{indx}'] = rep
         
-        # with open('./tmp/representations_facenet.pkl', 'wb') as f:
-        #     pickle.dump(representations_facenet, f)
-        
-        for face_info in faces.values():
+        for indx, face_info in enumerate(faces.values()):
             facial_area = face_info['facial_area']
-            face = Image.fromarray(img).crop((facial_area[0], facial_area[1], facial_area[2], facial_area[3]))
-            df = DeepFace.find(np.asarray(face), './tmp/DB', 'Facenet', model=model, enforce_detection=False)
-            if df.shape[0] > 0:
-                df = df.sort_values(by=['Facenet_cosine'])
-                if df['Facenet_cosine'][0] <= THRESHOLD:
+            y1 = max(facial_area[1]-200, 0)
+            y2 = min(facial_area[3]+200, img.shape[0]-1)
+            x1 = max(facial_area[0]-50, 0)
+            x2 = min(facial_area[2]+50, img.shape[1]-1)
+            face = img[y1:y2, x1:x2]
+            plt.imsave(f'./output/face{indx}.jpg', face)
+            
+            img_rep = DeepFace.represent(np.asarray(face), 'Facenet512', model, False)
+            for person in representations_facenet.keys():
+                distance = cosine(representations_facenet[person], img_rep)
+                print(person, distance)
+                if distance <= THRESHOLD:
                     img = cv2.rectangle(img, (facial_area[2], facial_area[3])
                         , (facial_area[0], facial_area[1]), (200, 200, 200), 1)
 
-                    cv2.putText(img, df['identity'][0].split('/')[-1].split('.')[0].split('_')[0]
+                    cv2.putText(img, person.split('_')[0]
                         , (facial_area[0],facial_area[3]), cv2.FONT_HERSHEY_SIMPLEX
                         , 1, color=(200,200,200), thickness=2)
+
+                    break
         
         plt.imsave('./output/output.jpg', img)
 
