@@ -277,12 +277,24 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
         cur = conn.cursor()
 
         # Run a query which collects all the images
-        # belong to the intended person
+        # belong to the intended person and records
+        # its corresponding logs
         cur.execute(
             f'''
             SELECT who_is_in, representation 
             FROM public.images
             WHERE user_email = '{user_email}'
+
+            INSERT INTO public.logs(user_email, action, date)
+            SELECT
+                '{user_email}',
+                'User "' ||
+                (
+                    SELECT full_name
+                    FROM public.users
+                    WHERE email = '{user_email}'
+                ) || '" evaluated the image with url ({image_url})',
+                NOW()
             '''
         )
 
