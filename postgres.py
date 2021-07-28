@@ -283,7 +283,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             f'''
             SELECT who_is_in, representation 
             FROM public.images
-            WHERE user_email = '{user_email}'
+            WHERE user_email = '{user_email}';
 
             INSERT INTO public.logs(user_email, action, date)
             SELECT
