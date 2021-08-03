@@ -241,6 +241,41 @@ def remove_user(conn, email):
         print(error)
 
 
+def analyze_emotion(image, output_path, person_name, actions):
+    '''
+    Analyze the image in the terms of 
+    age, gender, race, and emotions
+    '''
+
+    os.system(f'touch {output_path}/output.txt')
+
+    emotions = {
+        'angry': 'fury',
+        'disgust': 'disgusted',
+        'fear': 'frightened',
+        'happy': 'happy',
+        'sad': 'upset',
+        'surprise': 'surprised',
+        'neutral': 'neutral'
+    }
+    analysis = DeepFace.analyze(image, actions=actions)
+
+    with open(f'{output_path}/output.txt', 'a') as f:
+        f.write(f'{person_name} is ')
+        for action in actions:
+            if action == 'gender':
+                gender = analysis['gender'].lower()
+                f.write(f'a {gender} who is ')
+            elif action == 'age':
+                age = analysis['age']
+                f.write(f'about {age} years old and mostly seems to be')
+            elif action == 'emotion':
+                emotion = emotions[analysis['dominant_emotion']]
+                f.write(f'{emotion}!\n')
+
+
+
+
 def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Facenet512')):
     '''
     Evaluate the input image by gathering
@@ -259,6 +294,13 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
     # for storing the downloaded images and "output"
     # which is used for storing the output of the function
     os.system('mkdir ./tmp/ ./tmp/DB ./output/')
+
+    # Create a unique directory to prevent 
+    # replacing the outputs
+    outputs_number = len(os.listdir('./output/'))
+    os.system(f'mkdir ./output/{outputs_number}')
+    output_path = f'./output/{outputs_number}'
+
 
     try:
 
@@ -309,7 +351,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             face = img[y1:y2, x1:x2]
 
             # Save each extracted person seperately
-            plt.imsave(f'./output/face{indx}.jpg', face)
+            plt.imsave(f'{output_path}/face{indx}.jpg', face)
             
             # Get the corresponding embeding (vector of
             # 512 numbers) of the extracted face using a 
@@ -319,22 +361,28 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             # Get the Cosine-distance between
             # each extracted face and the user's
             # stored defining-images
-            for person in representations_facenet.keys():
-                distance = cosine(representations_facenet[person], img_rep)
-                print(person, distance)
+
+            person_name = 'unknown'
+            for person_id in representations_facenet.keys():
+                distance = cosine(representations_facenet[person_id], img_rep)
+                print(person_id, distance)
                 if distance <= THRESHOLD:
+                    person_name = person_id.split('_')[0]
                     img = cv2.rectangle(img, (facial_area[2], facial_area[3])
                         , (facial_area[0], facial_area[1]), (200, 200, 200), 1)
 
-                    cv2.putText(img, person.split('_')[0]
+                    cv2.putText(img, person_id.split('_')[0]
                         , (facial_area[0],facial_area[3]), cv2.FONT_HERSHEY_SIMPLEX
                         , 1, color=(200,200,200), thickness=2)
 
                     break
+            print()
+            analyze_emotion(np.asarray(face), output_path, person_name, actions=['emotion'])
+            
         
         # Store the output in which faces are 
         # marked and recognized
-        plt.imsave('./output/output.jpg', img)
+        plt.imsave(f'{output_path}/output.jpg', img)
 
 
         # Records corresponding logs
