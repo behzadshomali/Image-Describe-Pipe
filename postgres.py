@@ -3,6 +3,7 @@ import psycopg2
 from PIL import Image
 from deepface import DeepFace
 from retinaface import RetinaFace
+from scene_predictor.scene_predictor import describe_scene
 import os
 import requests
 from scipy.spatial.distance import cosine
@@ -247,7 +248,7 @@ def analyze_emotion(image, output_path, person_name, actions):
     age, gender, race, and emotions
     '''
 
-    os.system(f'touch {output_path}/output.txt')
+    os.system(f'touch {output_path}/emotions_output.txt')
 
     emotions = {
         'angry': 'fury',
@@ -260,7 +261,7 @@ def analyze_emotion(image, output_path, person_name, actions):
     }
     analysis = DeepFace.analyze(image, actions=actions)
 
-    with open(f'{output_path}/output.txt', 'a') as f:
+    with open(f'{output_path}/emotions_output.txt', 'a') as f:
         f.write(f'{person_name} is ')
         for action in actions:
             if action == 'gender':
@@ -274,6 +275,18 @@ def analyze_emotion(image, output_path, person_name, actions):
                 f.write(f'{emotion}!\n')
 
 
+def analyze_scene(image, output_path):
+    '''
+    Describe the scene using the code
+    provided in this repository:
+    https://github.com/saahiluppal/catr
+    '''
+
+    os.system(f'touch {output_path}/scene_output.txt')
+
+    with open(f'{output_path}/scene_output.txt', 'w') as f:
+        output = describe_scene(image)
+        f.write(f'{output}\n')
 
 
 def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Facenet512')):
@@ -377,8 +390,10 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
 
                     break
             print()
-            analyze_emotion(np.asarray(face), output_path, person_name, actions=['emotion'])
-            
+
+            face_image = np.asarray(face)
+            analyze_emotion(face_image, output_path, person_name, actions=['emotion'])
+            analyze_scene(face_image, output_path)
         
         # Store the output in which faces are 
         # marked and recognized
