@@ -24,11 +24,11 @@
           <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbar">
-            <div class="navbar-nav">
-                <a class="nav-item nav-link" href="/home">Home</a>
-                <a class="nav-item nav-link" href="/login">Login</a>
-                <a class="nav-item nav-link" href="/sign-up">Sign up</a>
-            </div>
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/home">Home</a>
+            <a class="nav-item nav-link" href="/login">Login</a>
+            <a class="nav-item nav-link" href="/sign-up">Sign up</a>
+          </div>
         </div>
       </div>
     </nav>
@@ -39,5 +39,24 @@
     ></script>
 
     <div class="container">{% block content %}{% endblock %}</div>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %} {% for category, message in messages %}
+    <div align="right">
+    <div
+      id="alert"
+      class="alert alert-{{ category }} w-25"
+      role="alert"
+      align="left"
+    >
+      <button
+        type="button"
+        class="btn-close"
+        data-dismiss="alert"
+        onclick="document.getElementById('alert').style.display='none'"
+      ></button>
+      {{ message }}
+    </div>
+  </div>
+    {% endfor %} {% endif %} {% endwith %}
   </body>
 </html>

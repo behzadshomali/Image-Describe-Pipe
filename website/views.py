@@ -1,8 +1,8 @@
 from flask import Blueprint, render_template
 
-main = Blueprint('main', __name__)
+viewss = Blueprint('views', __name__)
 
-@main.route('/')
-@main.route('/home')
+@viewss.route('/')
+@viewss.route('/home')
 def home():
     return render_template('home.html')
