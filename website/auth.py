@@ -8,8 +8,9 @@ def login():
 
 @auth.route('/logout')
 def logout():
-    return render_template('logout.html')
+    return redirect(url_for('main.home'))
 
 @auth.route('/sign-up')
 def sign_up():
-    return redirect(url_for('main.home'))
+    return render_template('sign_up.html')
+    

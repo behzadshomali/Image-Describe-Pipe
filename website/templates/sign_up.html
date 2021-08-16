@@ -1,2 +1,89 @@
-{% extends "base.html" %}
-{% block title %}Sign up{% endblock %}
+{% extends "base.html" %} {% block title %}Sign up{% endblock %} {% block
+content %}
+<div class="mx-auto" style="max-width: 50%;">
+<form method="POST">
+  <h1 align="center">Sign up</h1>
+  <br />
+  <div class="row form mx-5">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="firstName">First name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="firstName"
+          placeholder="First name"
+        />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="lastName">Last name</label>
+        <input
+          type="text"
+          class="form-control"
+          id="lastName"
+          placeholder="Last name"
+        />
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row form mx-5">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          class="form-control"
+          id="email"
+          placeholder="name@example.com"
+        />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="birthDate">Birth date</label>
+        <select id="birthDate" class="form-control" style="max-width: 50%;">
+          <option value="">Choose...</option>
+          {% for year in range(2010, 1950, -1) %}
+          <option value=f"{{year}}">{{year}}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  </div>
+  <br />
+  <div class="row form mx-5">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="password1">Password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password1"
+          placeholder="****"
+        />
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="password2">Repeat the password</label>
+        <input
+          type="password"
+          class="form-control"
+          id="password2"
+          placeholder="****"
+        />
+      </div>
+    </div>
+  </div>
+  <br />
+  <div align="center">
+    <button type="submit" class="btn btn-outline-primary w-25">Sign up</button>
+  </div>
+</form>
+</div>
+{% endblock %}
+
+
