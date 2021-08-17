@@ -1,23 +1,41 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
 from postgres import add_user, connect
 import datetime
- 
+from .models import users
+from . import db
+from flask_login import login_user, logout_user, login_required, current_user
+from werkzeug.security import generate_password_hash, check_password_hash
 
 auth = Blueprint('auth', __name__)
 
-conn = connect('beh9722762451')
+# conn = connect('beh9722762451')
 
 
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
-    email = request.form.get('email')
-    password = request.form.get('password')
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        user = users.query.filter_by(email=email).first()
+        if user:
+            if check_password_hash(user.password, password):
+                flash('Logged in!', category='success')
+                login_user(user, remember=True)
+                return redirect(url_for('views.home'))
+            else:
+               flash('Password is incorrect.', category='danger') 
+        else:
+            flash('The user does not exist.', category='danger')
 
     return render_template('login.html')
 
 @auth.route('/logout', methods=['GET', 'POST'])
+@login_required
 def logout():
+    logout_user()
+    flash('Logged out!', category='success')
     return redirect(url_for('main.home'))
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
@@ -30,17 +48,9 @@ def sign_up():
         password = request.form.get('password1')
         repeated_password = request.form.get('password2')
 
-        cur = conn.cursor()
-        cur.execute(
-            f'''
-            SELECT email
-            FROM public.users
-            WHERE email = '{email}'
-            '''
-        )
-        user_exists = len(cur.fetchall())
-        
-        if user_exists:
+        user = users.query.filter_by(email=email).first()
+
+        if user:
             flash('The user already exists!', category='danger')
             print('exists')
         elif password != repeated_password:
@@ -50,13 +60,11 @@ def sign_up():
             print('good')
             age = datetime.datetime.now().year - int(birth_date)
             full_name = first_name + ' ' + last_name
-            add_user(
-                conn,
-                full_name,
-                age,
-                email,
-                password
-            )
+            hashed_password = generate_password_hash(password, method='sha256')
+            new_user = users(email=email, age=age, password=hashed_password, full_name=full_name)
+            db.session.add(new_user)
+            db.session.commit()
+            login_user(new_user, remember=True)
             flash('User created!', category='success')
             return redirect(url_for('views.home'))
 
