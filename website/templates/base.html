@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="height: 100%; width: 100%;">
   <head>
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -10,7 +10,9 @@
       integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" type="text/css" href="../static/styles/base.css">
     <title>{% block title %}{% endblock %}</title>
+
   </head>
   <body>
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -38,7 +40,7 @@
       crossorigin="anonymous"
     ></script>
 
-    <div class="container">{% block content %}{% endblock %}</div>
+    <div class="container" style="height: 100%; min-width: 100%;">{% block content %}{% endblock %}</div>
     {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %} {% for category, message in messages %}
     <div align="right">

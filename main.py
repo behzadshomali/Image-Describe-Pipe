@@ -1,6 +1,7 @@
 # from postgres import *
 from website import create_app
 
+
 if __name__ == '__main__':
     # password = input('Enter your password: ')
     # conn = connect(password=password)
@@ -22,6 +23,5 @@ if __name__ == '__main__':
     #     'behzad.shomali@gmail.com', 
     #     'https://i.pinimg.com/originals/09/88/1f/09881f0ef958f782c8bf73e89ab9bdfd.jpg')
     # disconnect(conn)
-
     app = create_app()
     app.run(debug=True)
