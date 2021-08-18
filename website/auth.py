@@ -54,21 +54,22 @@ def sign_up():
             flash('Password doesn\'t match!', category='danger')
             print('bad password')
         elif len(password)<8:
-            flash('Password doesn\'t match!', category='danger')
+            flash('short password', category='danger')
             print('short password')
         elif not re.search("[a-z]",password):
             flash('Password doesn\'t match!', category='danger')
             print('bad password')
         elif not re.search("[A-Z]", password):
-            flash('Password doesn\'t match!', category='danger')
+            flash('Password must contain atleast one Uppercase letter', category='danger')
             print('Password must contain atleast one Uppercase letter')     
         elif not re.search("[0-9]", password):
-            flash('Password must contain at least one digit')  
+            flash('Password must contain at least one digit') 
+            print('Password must contain at least one digit') 
         elif not re.search("[_@$]", password):   
-            flash('Password doesn\'t match!', category='danger')
+            flash('Password must contain at least one character', category='danger')
             print('Password must contain at least one character')   
         elif re.search("\s", password):
-              flash('Password doesn\'t match!', category='danger')
+              flash('the field is empty', category='danger')
               print('the field is empty')      
         else:
             print('good')
