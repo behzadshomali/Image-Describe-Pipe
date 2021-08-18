@@ -5,7 +5,7 @@ from .models import users
 from . import db
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
-
+import re
 auth = Blueprint('auth', __name__)
 
 # conn = connect('beh9722762451')
@@ -56,6 +56,23 @@ def sign_up():
         elif password != repeated_password:
             flash('Password doesn\'t match!', category='danger')
             print('bad password')
+        elif len(password)<8:
+            flash('Password doesn\'t match!', category='danger')
+            print('short password')
+        elif not re.search("[a-z]",password):
+            flash('Password doesn\'t match!', category='danger')
+            print('bad password')
+        elif not re.search("[A-Z]", password):
+            flash('Password doesn\'t match!', category='danger')
+            print('Password must contain atleast one uppercase letter')     
+        elif not re.search("[0-9]", password):
+            flash('Password must contain at least one digit')  
+        elif not re.search("[_@$]", password):   
+            flash('Password doesn\'t match!', category='danger')
+            print('Password must contain at least one character')   
+        elif re.search("\s", password):
+              flash('Password doesn\'t match!', category='danger')
+              print('the field is empty')      
         else:
             print('good')
             age = datetime.datetime.now().year - int(birth_date)
