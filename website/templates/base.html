@@ -47,8 +47,7 @@
     <div class="container" style="height: 100%; min-width: 100%">
       {% block content %}{% endblock %} {% with messages =
       get_flashed_messages(with_categories=true) %} {% if messages %} {% for
-      category, message in messages %} {% if category != 'success' %} {% set
-      category = 'danger'%} {% endif %}
+      category, message in messages %}
       <div align="right">
         <div
           id="alert"

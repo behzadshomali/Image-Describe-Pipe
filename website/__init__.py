@@ -12,6 +12,7 @@ DB_NAME = 'Image describe pipe DB'
 def create_app():
     app = Flask(__name__)
     app.config['SECRET_KEY'] = 'idp'
+    app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
     app.config['SQLALCHEMY_DATABASE_URI'] = f'postgresql://{USER}:{PASSWORD}@localhost/{DB_NAME}'
     db.init_app(app)
     
@@ -24,6 +25,9 @@ def create_app():
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
+    login_manager.login_message = 'Please log in to access this page'
+    login_manager.login_message_category = 'danger'
+
     login_manager.init_app(app)
 
     @login_manager.user_loader

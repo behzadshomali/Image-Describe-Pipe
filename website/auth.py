@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, request, flash
 from postgres import add_user, connect
 import datetime
 from .models import users
+from datetime import timedelta
 from . import db
 from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -19,7 +20,7 @@ def login():
         if user:
             if check_password_hash(user.password, password):
                 flash('Logged in!', category='success')
-                login_user(user, remember=True)
+                login_user(user, remember=True, duration=timedelta(minutes=30))
                 return redirect(url_for('views.home'))
             else:
                flash('Password is incorrect.', category='danger') 
@@ -33,7 +34,7 @@ def login():
 def logout():
     logout_user()
     flash('Logged out!', category='success')
-    return redirect(url_for('main.home'))
+    return redirect(url_for('views.home'))
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
@@ -79,7 +80,7 @@ def sign_up():
             new_user = users(email=email, age=age, password=hashed_password, full_name=full_name)
             db.session.add(new_user)
             db.session.commit()
-            login_user(new_user, remember=True)
+            login_user(user, remember=True, duration=timedelta(minutes=30))
             flash('User created!', category='success')
             return redirect(url_for('views.home'))
 
