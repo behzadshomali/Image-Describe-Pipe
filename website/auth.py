@@ -64,7 +64,7 @@ def sign_up():
             print('bad password')
         elif not re.search("[A-Z]", password):
             flash('Password doesn\'t match!', category='danger')
-            print('Password must contain atleast one uppercase letter')     
+            print('Password must contain atleast one Uppercase letter')     
         elif not re.search("[0-9]", password):
             flash('Password must contain at least one digit')  
         elif not re.search("[_@$]", password):   
