@@ -3,10 +3,12 @@
 <link rel="stylesheet" type="text/css" href="../static/styles/home.css" />
 
 <div class="bg">
+  {% if user.is_authenticated %}
   <div class="dev_container">
     <h1 align="center">Home</h1>
     <!-- <div class="dev_container"> -->
-    <div class="center">
+      <br>
+    <div align="center">
       <button
         type="button"
         id="addImage"
@@ -25,5 +27,13 @@
       </button>
     </div>
   </div>
+  {% else %}
+  <div>
+    <p class="p-lg" align="center">Image Describe Pipe</p>
+    <p class="p-md" align="center">
+      Sign up, upload your image, and enjoy reading the description!
+    </p>
+  </div>
+  {% endif %}
 </div>
 {% endblock %}

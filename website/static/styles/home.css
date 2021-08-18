@@ -16,6 +16,19 @@
 
 h1 {
   color: aqua;
+  padding-top: 1em;
+}
+
+.p-lg {
+  color: aqua;
+  font-size: 3.75em;
+  padding-top: 1em;
+}
+
+.p-md {
+  color: azure;
+  font-size: 1.5em;
+  /* padding-top: 1em; */
 }
 
 .circle-btn-lg {
@@ -40,7 +53,7 @@ h1 {
     rgba(140, 80, 80, 0.5)
   );
   color: aqua;
-  font-size: 120%;
+  font-weight: bold;
   transition: 0.1s;
 }
 

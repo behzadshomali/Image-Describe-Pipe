@@ -8,9 +8,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import re
 auth = Blueprint('auth', __name__)
 
-# conn = connect('beh9722762451')
-
-
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():
@@ -29,7 +26,7 @@ def login():
         else:
             flash('The user does not exist.', category='danger')
 
-    return render_template('login.html')
+    return render_template('login.html', , user=current_user)
 
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
@@ -85,5 +82,5 @@ def sign_up():
             flash('User created!', category='success')
             return redirect(url_for('views.home'))
 
-    return render_template('sign_up.html')
+    return render_template('sign_up.html', user=current_user)
     
