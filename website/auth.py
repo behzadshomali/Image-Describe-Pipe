@@ -14,8 +14,8 @@ auth = Blueprint('auth', __name__)
 def login():
     if request.method == 'POST':
         email = request.form.get('email')
+        email=email.lower()
         password = request.form.get('password')
-
         user = users.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
