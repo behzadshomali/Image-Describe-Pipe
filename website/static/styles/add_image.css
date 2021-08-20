@@ -36,6 +36,11 @@ table {
 }
 
 .td-button {
+    border-top-width: 2px; 
+    border-color:rgba(0, 0, 0, 0.2);
+}
+
+.button {
   /* Center the button*/
   margin: auto;
   display: block;
