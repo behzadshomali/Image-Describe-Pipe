@@ -1,0 +1,51 @@
+{% extends "base.html" %} {% block title %}Add new image{% endblock %} {% block
+content %}
+
+<link rel="stylesheet" type="text/css" href="../static/styles/add_image.css" />
+
+<div class="bg">
+  <form method="POST">
+    <p align="center" class="p-lg">Add a new image</p>
+    <p align="center" class="p-md">
+      Upload an image where there is no more than one person...
+    </p>
+    <br />
+    <div class="form-group" align="center">
+      <table class="w-50">
+        <tr>
+          <td class="td-label"><label for="url">URL address</label></td>
+          <td>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              class="m-3 form-control"
+              placeholder="https://..."
+            />
+          </td>
+        </tr>
+        <tr>
+          <td class="td-label"><label for="person">Who is in</label></td>
+          <td>
+            <input
+              type="text"
+              id="person"
+              name="person"
+              class="m-3 form-control"
+              placeholder="Jack White"
+            />
+          </td>
+        </tr>
+        <!-- <br /> -->
+        <tr>
+          <td colspan="2">
+            <button class="btn outline_btn td-button mb-3" type="submit">
+              Add
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -14,3 +14,9 @@ def home():
 @login_required
 def profile():
     return render_template('profile.html', user=current_user)
+
+
+@views.route('/home/addImage', methods=['GET', 'POST'])
+@login_required
+def add_image():
+    return render_template('add_image.html', user=current_user)

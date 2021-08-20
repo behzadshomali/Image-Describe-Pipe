@@ -1,0 +1,71 @@
+@import "./home.css";
+
+:root {
+  --border_color: rgb(160, 156, 156);
+  --custom_gray: rgb(222, 216, 216);
+  --placehodler_color: rgb(167, 161, 161);
+}
+
+.form-control::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--placehodler_color);
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: var(--placehodler_color);
+}
+
+.form-control::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: var(--placehodler_color);
+}
+
+table {
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.1)
+  );
+}
+
+.td-label {
+  text-align: right;
+  color: aqua;
+}
+
+.td-button {
+  /* Center the button*/
+  margin: auto;
+  display: block;
+
+  margin-top: 1.25em;
+  width: 15%;
+  border-width: 1px;
+  border-color: var(--border_color);
+}
+
+#url {
+  width: 75%;
+}
+
+#person {
+  width: 30%;
+}
+
+input[type="text"],
+input[type="url"] {
+  color: rgb(203, 195, 195);
+  background-color: transparent;
+  border-color: var(--border_color);
+  transition: 0.5s;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus {
+  color: white;
+  background-color: transparent;
+  border-radius: 3em;
+  transition: 0.75s;
+}
