@@ -1,0 +1,59 @@
+{% extends "base.html" %} {% block title %}Describe image{% endblock %} {% block
+content %}
+
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="../static/styles/describe_image.css"
+/>
+
+<div class="bg">
+  <form method="POST">
+    <p align="center" class="p-lg" style="display: {{ display }};">
+      Describe an image
+    </p>
+    <p align="center" class="p-md" style="display: {{ display }};">
+      Upload the image consisting the people you tend to describe...
+    </p>
+    <br />
+    <div class="form-group" align="center">
+      <img id="image" name="image" src="{{ url }}" />
+      <table class="w-50" style="display: {{ table_dis }};">
+        <tr>
+          <td class="td-label"><label for="url">URL address</label></td>
+          <td>
+            <input
+              type="url"
+              id="url"
+              name="url"
+              class="m-3 form-control"
+              placeholder="https://..."
+            />
+          </td>
+        </tr>
+
+        <tr>
+          <td class="td-button" colspan="2">
+            <button class="btn outline_btn button mb-3" type="submit">
+              Describe
+            </button>
+          </td>
+        </tr>
+      </table>
+      <div>
+      <table
+        class="w-50 res-table"
+        style="display: {{ res_table_dis }}; border-width: 1px; border-color: white;"
+      >
+        <tr>
+          <td class="res-td-top">{{ scene_description }}</td>
+        </tr>
+        <tr>
+          <td class="res-td-bot">{{ emotions }}</td>
+        </tr>
+      </table>
+      </div>
+    </div>
+  </form>
+</div>
+{% endblock %}
