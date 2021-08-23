@@ -1,0 +1,39 @@
+{% extends "base.html" %} {% block title %}Home{% endblock %} {% block content
+%}
+<link rel="stylesheet" type="text/css" href="../static/styles/home.css" />
+
+<div class="bg">
+  {% if user.is_authenticated %}
+  <div class="dev_container">
+    <h1 align="center">Home</h1>
+    <!-- <div class="dev_container"> -->
+      <br>
+    <div align="center">
+      <button
+        type="button"
+        id="addImage"
+        name="addImage"
+        class="btn circle-btn-lg outline_btn"
+      >
+        Add new image
+      </button>
+      <button
+        type="button"
+        id="describeImage"
+        name="describeImage"
+        class="btn circle-btn-lg outline_btn"
+      >
+        Describe image
+      </button>
+    </div>
+  </div>
+  {% else %}
+  <div>
+    <p class="p-lg" align="center">Image Describe Pipe</p>
+    <p class="p-md" align="center">
+      Sign up, upload your image, and enjoy reading the description!
+    </p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

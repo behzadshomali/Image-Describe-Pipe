@@ -1,0 +1,9 @@
+.DS_Store
+scene_predictor/.DS_Store
+
+__pycache__/
+website/__pycache__/
+scene_predictor/__pycache__/
+scene_predictor/datasets/__pycache__/
+scene_predictor/models/__pycache__/
+

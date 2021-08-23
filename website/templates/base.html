@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en" style="height: 100%; width: 100%">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-KyZXEAg3QhqLMpG8r+8fhAXLRk2vvoC2f3B09zVXn8CA5QIVfZOJ3BCsw2P0p/We"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" type="text/css" href="../static/styles/base.css" />
+    <title>{% block title %}{% endblock %}</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <button
+          class="navbar-toggler"
+          type="button"
+          data-bs-toggle="collapse"
+          data-bs-target="#navbar"
+        >
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbar">
+          <div class="navbar-nav">
+            <a class="nav-item nav-link" href="/home">Home</a>
+            {% if user.is_authenticated %}
+            <a class="nav-item nav-link" href="/profile">Profile</a>
+            <a class="nav-item nav-link" href="/logout">Logout</a>
+            {% else %}
+            <a class="nav-item nav-link" href="/login">Login</a>
+            <a class="nav-item nav-link" href="/sign-up">Sign up</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </nav>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+      crossorigin="anonymous"
+    ></script>
+
+    <div class="container" style="height: 100%; min-width: 100%">
+      {% block content %}{% endblock %} {% with messages =
+      get_flashed_messages(with_categories=true) %} {% if messages %} {% for
+      category, message in messages %}
+      <div align="right">
+        <div
+          id="alert"
+          class="alert alert-{{ category }} w-25"
+          role="alert"
+          align="left"
+        >
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="alert"
+          ></button>
+          {{ message }}
+        </div>
+      </div>
+      {% endfor %} {% endif %} {% endwith %}
+    </div>
+  </body>
+</html>
