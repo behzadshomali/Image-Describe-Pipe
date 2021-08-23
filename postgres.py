@@ -1,4 +1,3 @@
-from typing import final
 import psycopg2
 from PIL import Image
 from deepface import DeepFace
@@ -7,7 +6,6 @@ from scene_predictor.scene_predictor import describe_scene
 import os
 import requests
 from scipy.spatial.distance import cosine
-import pickle
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2
@@ -272,7 +270,7 @@ def analyze_emotion(image, output_path, person_name, actions):
                 f.write(f'about {age} years old and mostly seems to be')
             elif action == 'emotion':
                 emotion = emotions[analysis['dominant_emotion']]
-                f.write(f'{emotion}!\n')
+                f.write(f'{emotion}\n')
 
 
 def analyze_scene(image, output_path):
@@ -308,11 +306,12 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
     # which is used for storing the output of the function
     os.system('mkdir ./tmp/ ./tmp/DB ./output/')
 
-    # Create a unique directory to prevent 
-    # replacing the outputs
-    outputs_number = len(os.listdir('./output/'))
-    os.system(f'mkdir ./output/{outputs_number}')
-    output_path = f'./output/{outputs_number}'
+    # # Create a unique directory to prevent 
+    # # replacing the outputs
+    # outputs_number = len(os.listdir('./output/'))
+    # os.system(f'mkdir ./output/{outputs_number}')
+    # output_path = f'./output/{outputs_number}'
+    output_path = './output/'
 
 
     try:
@@ -324,6 +323,9 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
 
         # Read the downloaded into array of numbers
         img = plt.imread('./tmp/img.jpg')
+        
+        # Analyze and describe the scene
+        analyze_scene(img, output_path)
 
         # Detect the faces appearing in the image
         # by a confidence ratio of 95%
@@ -375,7 +377,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             # each extracted face and the user's
             # stored defining-images
 
-            person_name = 'unknown'
+            person_name = 'Unknown person'
             for person_id in representations_facenet.keys():
                 distance = cosine(representations_facenet[person_id], img_rep)
                 print(person_id, distance)
@@ -393,7 +395,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
 
             face_image = np.asarray(face)
             analyze_emotion(face_image, output_path, person_name, actions=['emotion'])
-            analyze_scene(face_image, output_path)
+            
         
         # Store the output in which faces are 
         # marked and recognized

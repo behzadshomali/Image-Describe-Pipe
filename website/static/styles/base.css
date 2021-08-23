@@ -6,3 +6,13 @@ body {
 h1 {
   font-size: 3.75em;
 }
+
+.p-lg {
+  font-size: 3.75em;
+  padding-top: 1em;
+}
+
+.p-md {
+  font-size: 1.5em;
+  /* padding-top: 1em; */
+}
