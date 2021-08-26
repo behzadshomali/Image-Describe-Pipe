@@ -2,6 +2,6 @@
 @import "./describe_image.css";
 
 #deleteMess {
-    color: rgb(204, 98, 27);
+    color: tomato;
     font-weight: bold;
 }

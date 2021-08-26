@@ -1,0 +1,24 @@
+@import "./home.css";
+@import "./describe_image.css";
+
+.my-custom-scrollbar {
+  position: relative;
+  max-height: 18.75em;
+  overflow: auto;
+}
+.table-wrapper-scroll-y {
+  display: block;
+}
+
+table {
+    background-color: rgba(95, 158, 160, 0.65);
+}
+
+
+td {
+  white-space: nowrap;
+}
+
+.outline_btn {
+    width: 10%;
+}

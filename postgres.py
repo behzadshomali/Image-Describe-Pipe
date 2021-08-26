@@ -93,6 +93,30 @@ def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.bu
         os.system(f'rm -rf ./tmp/')
 
 
+def get_images(conn, user_email):
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            f'''
+            SELECT who_is_in, image_url
+            FROM images
+            WHERE user_email = '{user_email}'
+            ORDER BY who_is_in
+            '''
+        )
+
+        result = list(cur.fetchall())
+        
+        conn.commit()
+        cur.close()
+
+        return result
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return None
+
+
+
 def remove_defining_image(conn, user_email, image_url):
     ''' Remove an image from the database which was used for evaluating images '''
 
@@ -260,12 +284,16 @@ def analyze_emotion(image, output_path, person_name, actions):
     analysis = DeepFace.analyze(image, actions=actions)
 
     with open(f'{output_path}/emotions_output.txt', 'a') as f:
+        if person_name == '':
+            gender = analysis['gender'].lower()
+            person_name = f'The unknown {gender}'
+
         f.write(f'{person_name} is ')
         for action in actions:
-            if action == 'gender':
-                gender = analysis['gender'].lower()
-                f.write(f'a {gender} who is ')
-            elif action == 'age':
+            # if action == 'gender':
+            #     gender = analysis['gender'].lower()
+            #     f.write(f'a {gender} who is ')
+            if action == 'age':
                 age = analysis['age']
                 f.write(f'about {age} years old and mostly seems to be')
             elif action == 'emotion':
@@ -377,7 +405,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             # each extracted face and the user's
             # stored defining-images
 
-            person_name = 'Unknown person'
+            person_name = ''
             for person_id in representations_facenet.keys():
                 distance = cosine(representations_facenet[person_id], img_rep)
                 print(person_id, distance)
@@ -394,7 +422,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             print()
 
             face_image = np.asarray(face)
-            analyze_emotion(face_image, output_path, person_name, actions=['emotion'])
+            analyze_emotion(face_image, output_path, person_name, actions=['emotion', 'gender'])
             
         
         # Store the output in which faces are 
