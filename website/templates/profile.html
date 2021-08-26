@@ -1,2 +1,34 @@
-{% extends "base.html" %}
-{% block title %}Profile{% endblock %}
+{% extends "base.html" %} {% block title %}Profile{% endblock %} {% block
+content %}
+<link rel="stylesheet" type="text/css" href="../static/styles/profile.css" />
+
+
+<div class="bg">
+  <!-- <form method="POST"> -->
+  <div class="form-group dev_container">
+    <h1 align="center">Profile</h1>
+    <br />
+    <div align="center">
+      <!-- <button
+          type="button"
+          id="describeImage"
+          name="describeImage"
+          class="btn circle-btn-lg outline_btn"
+          onclick="location.href = '/describeImage';"
+        >
+          Describe image
+        </button> -->
+      <button
+        type="button"
+        id="removeUser"
+        name="removeUser"
+        class="btn circle-btn-lg outline_btn"
+        onclick="location.href = 'profile/removeUser';"
+      >
+        Remove the profile
+      </button>
+    </div>
+  </div>
+  <!-- </form> -->
+</div>
+{% endblock %}

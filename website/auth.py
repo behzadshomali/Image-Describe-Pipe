@@ -61,8 +61,8 @@ def sign_up():
             flash('Password doesn\'t match!', category='danger')
             print('bad password')
         elif not re.search("[A-Z]", password):
-            flash('Password must contain atleast one Uppercase letter', category='danger')
-            print('Password must contain atleast one Uppercase letter')     
+            flash('Password must contain at least one Uppercase letter', category='danger')
+            print('Password must contain at least one Uppercase letter')     
         elif not re.search("[0-9]", password):
             flash('Password must contain at least one digit') 
             print('Password must contain at least one digit') 
@@ -73,14 +73,13 @@ def sign_up():
               flash('the field is empty', category='danger')
               print('the field is empty')      
         else:
-            print('good')
             age = datetime.datetime.now().year - int(birth_date)
             full_name = first_name + ' ' + last_name
             hashed_password = generate_password_hash(password, method='sha256')
             new_user = users(email=email, age=age, password=hashed_password, full_name=full_name)
             db.session.add(new_user)
             db.session.commit()
-            login_user(user, remember=True, duration=timedelta(minutes=30))
+            login_user(new_user, remember=True, duration=timedelta(minutes=30))
             flash('User created!', category='success')
             return redirect(url_for('views.home'))
 
