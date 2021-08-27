@@ -2,22 +2,29 @@
 content %}
 <link rel="stylesheet" type="text/css" href="../static/styles/profile.css" />
 
-
 <div class="bg">
-  <!-- <form method="POST"> -->
   <div class="form-group dev_container">
     <h1 align="center">Profile</h1>
     <br />
     <div align="center">
-        <button
-          type="button"
-          id="removeImage"
-          name="removeImage"
-          class="btn circle-btn-lg outline_btn"
-          onclick="location.href = 'profile/removeImage';"
-        >
-          Remove defining image
-        </button>
+      <button
+        type="button"
+        id="changePassword"
+        name="changePassword"
+        class="btn circle-btn-lg outline_btn"
+        onclick="location.href = 'profile/changePassword';"
+      >
+        Change the password
+      </button>
+      <button
+        type="button"
+        id="removeImage"
+        name="removeImage"
+        class="btn circle-btn-lg outline_btn"
+        onclick="location.href = 'profile/removeImage';"
+      >
+        Remove defining image
+      </button>
       <button
         type="button"
         id="removeUser"
@@ -29,6 +36,5 @@ content %}
       </button>
     </div>
   </div>
-  <!-- </form> -->
 </div>
 {% endblock %}
