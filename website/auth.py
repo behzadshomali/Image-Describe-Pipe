@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, redirect, url_for, request, flash
-from postgres import add_user, connect
+from postgres import connect, login_user_db
 import datetime
 from .models import users
 from datetime import timedelta
@@ -8,6 +8,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 import re
 
+conn = connect('123')
 
 def is_password_ok(password, repeated_password):
     if password != repeated_password:
@@ -54,8 +55,9 @@ def login():
         user = users.query.filter_by(email=email).first()
         if user:
             if check_password_hash(user.password, password):
-                flash('Logged in!', category='success')
                 login_user(user, remember=True, duration=timedelta(minutes=30))
+                login_user_db(conn, current_user.email)
+                flash('Logged in!', category='success')
                 return redirect(url_for('views.home'))
             else:
                flash('Password is incorrect.', category='danger') 
@@ -64,12 +66,14 @@ def login():
 
     return render_template('login.html' , user=current_user)
 
+
 @auth.route('/logout', methods=['GET', 'POST'])
 @login_required
 def logout():
     logout_user()
     flash('Logged out!', category='success')
     return redirect(url_for('views.home'))
+
 
 @auth.route('/sign-up', methods=['GET', 'POST'])
 def sign_up():
@@ -94,6 +98,8 @@ def sign_up():
             db.session.add(new_user)
             db.session.commit()
             login_user(new_user, remember=True, duration=timedelta(minutes=30))
+            login_user_db(conn, current_user.email)
+
             flash('User created!', category='success')
             return redirect(url_for('views.home'))
 

@@ -35,6 +35,30 @@ def disconnect(conn):
     print('Database connection closed.')
 
 
+def login_user_db(conn, user_email):
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            f'''
+            UPDATE users
+            SET lastlogin = NOW()
+            WHERE email = '{user_email}';
+
+            INSERT INTO public.logs(user_email, action, date)
+            VALUES(
+                '{user_email}',
+                'Logged in',
+                NOW()
+            )
+            '''
+        )
+
+        conn.commit()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+
 def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.build_model('Facenet512')):
     ''' Add image to database which is used for evaluting the further images '''
 
