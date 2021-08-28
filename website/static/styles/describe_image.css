@@ -54,6 +54,7 @@ table {
 }
 
 .td-button {
+  text-align: center;
     border-top-width: 2px; 
     border-color:rgba(0, 0, 0, 0.2);
 }

@@ -35,6 +35,30 @@ def disconnect(conn):
     print('Database connection closed.')
 
 
+def login_user_db(conn, user_email):
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            f'''
+            UPDATE users
+            SET lastlogin = NOW()
+            WHERE email = '{user_email}';
+
+            INSERT INTO public.logs(user_email, action, date)
+            VALUES(
+                '{user_email}',
+                'Logged in',
+                NOW()
+            )
+            '''
+        )
+
+        conn.commit()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+
+
 def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.build_model('Facenet512')):
     ''' Add image to database which is used for evaluting the further images '''
 
@@ -91,6 +115,57 @@ def add_defining_image(conn, user_email, image_url, who_is_in, model=DeepFace.bu
         # Remove the made temp directory
         # which is unused anymore
         os.system(f'rm -rf ./tmp/')
+
+
+def get_images(conn, user_email):
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            f'''
+            SELECT who_is_in, image_url
+            FROM images
+            WHERE user_email = '{user_email}'
+            ORDER BY who_is_in;
+
+            INSERT INTO public.logs(user_email, action, date)
+            SELECT
+                '{user_email}',
+                'Get the list of images',
+                NOW()
+            '''
+        )
+
+        result = list(cur.fetchall())
+        
+        conn.commit()
+        cur.close()
+        return result
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
+        return None
+
+
+def replace_password(conn, user_email, new_password):
+    try:
+        cur = conn.cursor()
+        cur.execute(
+            f'''
+            UPDATE users
+            SET password = '{new_password}'
+            WHERE email = '{user_email}';
+
+            INSERT INTO public.logs(user_email, action, date)
+            SELECT
+                '{user_email}',
+                'updated his/her password',
+                NOW()
+            '''
+        )
+
+        conn.commit()
+        cur.close()
+    except (Exception, psycopg2.DatabaseError) as error:
+        print(error)
 
 
 def remove_defining_image(conn, user_email, image_url):
@@ -151,7 +226,7 @@ def remove_defining_image(conn, user_email, image_url):
 
 
 def add_user(conn, full_name, age, email, password):
-    ''' Add a new user to the database '''
+    ''' Add a new user to the database '''  
     try:
         cur = conn.cursor()
 
@@ -172,12 +247,7 @@ def add_user(conn, full_name, age, email, password):
             INSERT INTO public.logs(user_email, action, date)
             SELECT
                 '{email}',
-                'User "' ||
-                (
-                    SELECT full_name
-                    FROM public.users
-                    WHERE email = '{email}'
-                ) || '" updated/added',
+                'New user updated/added',
                 NOW()
             '''
         )
@@ -260,12 +330,16 @@ def analyze_emotion(image, output_path, person_name, actions):
     analysis = DeepFace.analyze(image, actions=actions)
 
     with open(f'{output_path}/emotions_output.txt', 'a') as f:
+        if person_name == '':
+            gender = analysis['gender'].lower()
+            person_name = f'The unknown {gender}'
+
         f.write(f'{person_name} is ')
         for action in actions:
-            if action == 'gender':
-                gender = analysis['gender'].lower()
-                f.write(f'a {gender} who is ')
-            elif action == 'age':
+            # if action == 'gender':
+            #     gender = analysis['gender'].lower()
+            #     f.write(f'a {gender} who is ')
+            if action == 'age':
                 age = analysis['age']
                 f.write(f'about {age} years old and mostly seems to be')
             elif action == 'emotion':
@@ -377,7 +451,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             # each extracted face and the user's
             # stored defining-images
 
-            person_name = 'Unknown person'
+            person_name = ''
             for person_id in representations_facenet.keys():
                 distance = cosine(representations_facenet[person_id], img_rep)
                 print(person_id, distance)
@@ -394,7 +468,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             print()
 
             face_image = np.asarray(face)
-            analyze_emotion(face_image, output_path, person_name, actions=['emotion'])
+            analyze_emotion(face_image, output_path, person_name, actions=['emotion', 'gender'])
             
         
         # Store the output in which faces are 
@@ -408,12 +482,7 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
             INSERT INTO public.logs(user_email, action, date)
             SELECT
                 '{user_email}',
-                'User "' ||
-                (
-                    SELECT full_name
-                    FROM public.users
-                    WHERE email = '{user_email}'
-                ) || '" evaluated the image with url ({image_url})',
+                'Evaluated the image with url ({image_url})',
                 NOW()
             '''
         )

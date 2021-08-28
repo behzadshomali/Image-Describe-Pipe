@@ -1,0 +1,46 @@
+{% extends "base.html" %} {% block title %}Remove user{% endblock %} {% block
+content %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="../static/styles/remove_user.css"
+/>
+
+<div class="bg">
+  <form method="POST">
+    <p align="center" class="p-lg">Remove the profile</p>
+    <div align="center">
+      <p class="p-md w-75">
+        You are going to remove your profile permanently. Hence, you will lose
+        every single piece of data. If you are sure, please type below
+        <span id="deleteMess">"Delete the profile"</span>
+      </p>
+    </div>
+    <br />
+    <div class="form-group" align="center">
+      <table class="w-50">
+        <tr>
+          <td>
+              <div align="center">
+            <input
+              type="text"
+              id="verification"
+              name="verification"
+              class="m-3 form-control w-50"
+              align="center"
+            />
+        </div>
+          </td>
+        </tr>
+        <tr>
+          <td class="td-button">
+            <button class="btn outline_btn button mb-3" type="submit">
+              Remove
+            </button>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </form>
+</div>
+{% endblock %}

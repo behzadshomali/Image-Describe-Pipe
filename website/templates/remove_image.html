@@ -1,0 +1,48 @@
+{% extends "base.html" %} {% block title %}Remove image{% endblock %} {% block
+content %}
+<link
+  rel="stylesheet"
+  type="text/css"
+  href="../static/styles/remove_image.css"
+/>
+
+<div class="bg">
+  <form method="POST">
+    <p align="center" class="p-lg">Remove defining image</p>
+    <div align="center">
+      <p class="p-md w-75">
+        Remove unnecessary images to save time while describing the images
+      </p>
+    </div>
+    <br />
+    <div class="form-group" align="center">
+      <div
+        class="table-wrapper-scroll-y my-custom-scrollbar w-50 table-wrapper"
+      >
+        <table class="table table-bordered table-striped mb-0">
+          <thead>
+            <tr>
+              <th scope="col" style="width: 5%; text-align: center;">#</th>
+              <th scope="col" style="width: 15%;">Person</th>
+              <th scope="col">URL</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for person, url in images_urls %}
+            <tr>
+              <td scope="row"><input name=urls class="form-check-input" type="checkbox" value={{ url }} /></td>
+              <td>{{ person }}</td>
+              <td>{{ url }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        
+      </div>
+      <button type="submit" class="btn outline_btn mt-3">
+        Remove
+    </button>
+    </div>
+  </form>
+</div>
+{% endblock %}
