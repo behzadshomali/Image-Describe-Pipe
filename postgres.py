@@ -126,16 +126,21 @@ def get_images(conn, user_email):
             FROM images
             WHERE user_email = '{user_email}'
             ORDER BY who_is_in;
-
-            INSERT INTO public.logs(user_email, action, date)
-            SELECT
-                '{user_email}',
-                'Get the list of images',
-                NOW()
             '''
         )
 
         result = list(cur.fetchall())
+
+        cur.execute(
+            f'''
+            INSERT INTO public.logs(user_email, action, date)
+            VALUES(
+                '{user_email}',
+                'Get the list of images',
+                NOW()
+            )
+            '''
+        )
         
         conn.commit()
         cur.close()
@@ -155,10 +160,11 @@ def replace_password(conn, user_email, new_password):
             WHERE email = '{user_email}';
 
             INSERT INTO public.logs(user_email, action, date)
-            SELECT
+            VALUES(
                 '{user_email}',
                 'updated his/her password',
                 NOW()
+            )
             '''
         )
 
@@ -245,10 +251,11 @@ def add_user(conn, full_name, age, email, password):
             ON CONFLICT (email) DO UPDATE SET full_name = EXCLUDED.full_name, age = EXCLUDED.age, password = EXCLUDED.password;
 
             INSERT INTO public.logs(user_email, action, date)
-            SELECT
+            VALUES(
                 '{email}',
                 'New user updated/added',
                 NOW()
+            )
             '''
         )
 
@@ -480,10 +487,11 @@ def evaluate_image(conn, user_email, image_url, model=DeepFace.build_model('Face
         cur.execute(
             f'''
             INSERT INTO public.logs(user_email, action, date)
-            SELECT
+            VALUES(
                 '{user_email}',
                 'Evaluated the image with url ({image_url})',
                 NOW()
+            )
             '''
         )
 
