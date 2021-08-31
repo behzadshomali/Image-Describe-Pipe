@@ -1,29 +1,33 @@
 {% extends "base.html" %} {% block title %}Login{% endblock %} {% block content
 %}
+
+<link rel="stylesheet" type="text/css" href="../static/styles/login.css" />
+
+<div class="bg">
 <form method="POST">
   <h1 align="center">Login</h1>
   <br />
   <div class="form-group" align="center">
-    <!-- <label for="email">Email Address</label> -->
     <input
       type="text"
       id="email"
       name="email"
-      class="form-control w-25"
+      class="form-control"
       placeholder="Enter email..."
 
     />
     <br />
-    <!-- <label for="password">Password</label> -->
     <input
       type="password"
       id="password"
       name="password"
-      class="form-control w-25"
+      class="form-control"
       placeholder="Enter password..."
     />
     <br />
-    <button class="btn btn-outline-primary w-25" type="submit">Login</button>
+    <button class="btn outline_btn" type="submit">Login</button>
   </div>
 </form>
+</div>
+
 {% endblock %}

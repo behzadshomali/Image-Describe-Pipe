@@ -1,0 +1,13 @@
+@import "./home.css";
+@import "./utils.css";
+
+.btn {
+    width: 10%;
+    border-color: var(--border_color);
+    /* margin-top: 1.25em; */
+}
+
+input[type='text'],
+input[type='password'] {
+    width: 20%;
+}
