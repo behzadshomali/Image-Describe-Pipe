@@ -37,6 +37,9 @@ def remove_user():
 @login_required
 def remove_image():
     result = get_images(conn, current_user.email)
+    if not result:
+        result = []
+
     if request.method == 'POST':
         urls = request.form.getlist('urls')
 
