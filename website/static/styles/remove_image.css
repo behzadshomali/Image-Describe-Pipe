@@ -1,5 +1,4 @@
-@import "./home.css";
-@import "./describe_image.css";
+@import "./utils.css";
 
 .my-custom-scrollbar {
   position: relative;
@@ -11,14 +10,13 @@
 }
 
 table {
-    background-color: rgba(95, 158, 160, 0.65);
+  background-color: rgba(95, 158, 160, 0.65);
 }
-
 
 td {
   white-space: nowrap;
 }
 
 .outline_btn {
-    width: 10%;
+  width: 10%;
 }

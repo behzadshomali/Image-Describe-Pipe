@@ -1,7 +1,6 @@
-@import "./home.css";
-@import "./describe_image.css";
+@import "./utils.css";
 
 #deleteMess {
-    color: tomato;
-    font-weight: bold;
+  color: tomato;
+  font-weight: bold;
 }

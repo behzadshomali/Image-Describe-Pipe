@@ -1,0 +1,143 @@
+.bg {
+  background: linear-gradient(
+      rgba(0, 0, 0, 0.9),
+      rgba(0, 0, 0, 0.75),
+      rgba(0, 0, 0, 0.6),
+      rgba(0, 0, 0, 0.4)
+    ),
+    url("https://images.unsplash.com/photo-1474314881477-04c4aac40a0e?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1050&q=80");
+  height: 100%;
+  width: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+:root {
+  --border_color: rgb(160, 156, 156);
+  --custom_gray: rgb(222, 216, 216);
+  --placeholder_color: rgb(167, 161, 161);
+  --unfocus_color: rgba(255, 255, 255, 0.8);
+  --focus_color: rgb(255, 255, 255);
+}
+
+.form-control::placeholder {
+  /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: var(--placeholder_color);
+  opacity: 1; /* Firefox */
+}
+
+.form-control:-ms-input-placeholder {
+  /* Internet Explorer 10-11 */
+  color: var(--placeholder_color);
+}
+
+.form-control::-ms-input-placeholder {
+  /* Microsoft Edge */
+  color: var(--placeholder_color);
+}
+
+table {
+  background: linear-gradient(
+    rgba(0, 0, 0, 0.2),
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.1)
+  );
+}
+
+h1 {
+  color: aqua;
+  padding-top: 1em;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="password"],
+input[type="email"],
+.form-control {
+  color: var(--unfocus_color);
+  background-color: transparent;
+  border-color: var(--border_color);
+  transition: 0.5s;
+}
+
+input[type="text"]:focus,
+input[type="url"]:focus,
+input[type="password"]:focus,
+input[type="email"]:focus,
+.form-control:focus {
+  color: var(--focus_color);
+  background-color: transparent;
+  border-radius: 3em;
+  transition: 0.75s;
+}
+
+.circle-btn-lg {
+  width: 12.5em;
+  height: 12.5em;
+  border-radius: 6.25em;
+}
+
+.outline_btn {
+  background-color: transparent;
+  border-color: aqua;
+  color: aqua;
+  margin-left: 2em;
+  margin-right: 2em;
+}
+
+.outline_btn:hover {
+  background-color: gray;
+  background: radial-gradient(
+    circle,
+    rgba(138, 77, 77, 0.5),
+    rgba(140, 80, 80, 0.5)
+  );
+  color: aqua;
+  font-weight: bold;
+  transition: 0.1s;
+}
+
+.outline_btn:not(hover) {
+  font-size: 100%;
+  background-color: transparent;
+  transition: 0.1s;
+}
+
+.p-lg {
+  font-size: 3.75em;
+  padding-top: 1em;
+}
+
+.p-md {
+  font-size: 1.5em;
+}
+
+.center-button {
+  /* Center the button*/
+  margin: auto;
+  display: block;
+  margin-top: 1.25em;
+  width: 15%;
+  border-width: 1px;
+  border-color: var(--border_color);
+}
+
+.td-label {
+  text-align: right;
+  color: aqua;
+}
+
+.td-button {
+  text-align: center;
+  border-top-width: 2px;
+  border-color: rgba(0, 0, 0, 0.2);
+}
+
+.p-lg {
+  color: aqua;
+}
+
+.p-md {
+  color: azure;
+}
