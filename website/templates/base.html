@@ -48,7 +48,7 @@
       {% block content %}{% endblock %} {% with messages =
       get_flashed_messages(with_categories=true) %} {% if messages %} {% for
       category, message in messages %}
-      <div align="right">
+      <div id="flashMess" align="right">
         <div
           id="alert"
           class="alert alert-{{ category }} w-25"
