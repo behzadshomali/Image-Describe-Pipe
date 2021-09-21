@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import cv2
 
-def connect(password, host='localhost', database='Image describe pipe DB', user='postgres'):
+def connect(password, host='0.0.0.0', database='ImageDescribePipeDB', user='postgres', port=2000):
     """ Connect to the PostgreSQL database server """
 
     conn = None
@@ -18,6 +18,7 @@ def connect(password, host='localhost', database='Image describe pipe DB', user=
         print('Connecting to the PostgreSQL database...')
         conn = psycopg2.connect(
             host = host,
+            port = port,
             database = database,
             user = user,
             password = password)
