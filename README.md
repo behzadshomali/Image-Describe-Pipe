@@ -11,7 +11,9 @@ In this project, we developed a lightweight web service app wherein different mo
 ## How it works?
 
 To work with this app, right off the bat, the user should create an account so, he can upload some images that he wants to be compared with the image he wishes to describe. Then, whenever he wishes to evaluate or describe an image, he can easily input the image's URL and wait for the result to appear on the screen.
-In order to manipulate the faces, I used the <a src="https://github.com/serengil/deepface">deepface</a> framework. Besides, to predict and describe the context of the image I made use of <i>CA⫶TR: Image Captioning with Transformers</i> implemented in <a src="https://github.com/saahiluppal/catr">this</a> repository
+In order to manipulate the faces, I used the <a src="https://github.com/serengil/deepface">deepface</a> framework. Besides, to predict and describe the context of the image I made use of <i>CA⫶TR: Image Captioning with Transformers</i> implemented in <a src="https://github.com/saahiluppal/catr">this</a> repository.
+
+You can also find a short clip illustrating the appearance of the app <a src="https://drive.google.com/file/d/1Rm0Fdfdy_fqo2cbN3SbJxRhjkBQe_i_8/view?usp=sharing">here</a>.
 
 ## How to run it?
 
